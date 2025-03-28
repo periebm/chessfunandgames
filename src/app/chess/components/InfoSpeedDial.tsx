@@ -15,7 +15,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { QueryObserverResult, RefetchOptions } from '@tanstack/react-query';
-import { PlayerStatus } from '../../api/types';
+import { PlayerStatus } from '../../../api/types';
 import { IoRefreshCircleOutline } from 'react-icons/io5';
 
 export default function InfoSpeedDial({
@@ -163,18 +163,18 @@ export default function InfoSpeedDial({
             <Typography paragraph sx={{ mb: 2 }}>
               Considerando sua condição inicial distinta (rating
               significativamente inferior), aplica-se regime especial:
-              <Box component="ul" sx={{ pl: 2, mt: 1 }}>
-                <Box component="li" sx={{ mb: 1 }}>
-                  Se atingir rating entre <strong>1401 e 1499</strong>, a
-                  contribuição será reduzida para{' '}
-                  <strong>R$ 150,00 (cento e cinquenta reais)</strong>.
-                </Box>
-                <Box component="li">
-                  Persistindo o rateio com outros participantes, o valor será
-                  calculado <em>pro rata</em>.
-                </Box>
-              </Box>
             </Typography>
+            <Box component="ul" sx={{ pl: 2, mt: 1, mb: 2 }}>
+              <Box component="li" sx={{ mb: 1 }}>
+                Se atingir rating entre <strong>1401 e 1499</strong>, a
+                contribuição será reduzida para{' '}
+                <strong>R$ 150,00 (cento e cinquenta reais)</strong>.
+              </Box>
+              <Box component="li">
+                Persistindo o rateio com outros participantes, o valor será
+                calculado <em>pro rata</em>.
+              </Box>
+            </Box>
 
             <Typography
               variant="subtitle2"

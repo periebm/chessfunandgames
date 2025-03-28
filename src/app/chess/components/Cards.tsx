@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
 import Link from '@mui/material/Link';
-import { PlayerStatus } from '../../api/types';
+import { PlayerStatus } from '../../../api/types';
 
 export default function Cards({
   player,

@@ -1,107 +1,158 @@
 'use client';
 
 import { NextPage } from 'next';
-import Image from 'next/image';
-import { CircularProgress, Box, Typography } from '@mui/material';
-import Cards from './components/Cards';
-import InfoSpeedDial from './components/InfoSpeedDial';
-import { useQuery } from '@tanstack/react-query';
-import { getPlayerStatus } from '../api/chess';
-import { useEffect } from 'react';
-import CountdownTimer from './components/CountdownTimer';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Box, Typography, TextField, Button, Alert } from '@mui/material';
+import { SignJWT } from 'jose';
 
 const HomePage: NextPage = () => {
-  // Dados estáticos dos jogadores (substitua pelos dados reais)
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['chessData'], // Chave da query como array
-    queryFn: getPlayerStatus, // Função que busca os dados
-  });
+  const handleLogin = async () => {
+    // Substitua 'senha123' pela senha real que você deseja usar
+    if (password === process.env.NEXT_PUBLIC_SENHA) {
+      try {
+        // Chave secreta - EM PRODUÇÃO, ISSO DEVE VIR DE UM .ENV SEGURO
+        const secret = new TextEncoder().encode(
+          process.env.NEXT_PUBLIC_JWTSECRET
+        );
 
-  useEffect(() => {
-    if (data) {
-      console.log('Dados recebidos:', data);
+        // Tempo de expiração (24 horas a partir de agora)
+        const expirationTime = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
+
+        // Gerar JWT
+        const jwt = await new SignJWT({
+          // Dados que você quer incluir no token
+          authenticated: true,
+          role: 'USER', // ou qualquer role que você queira definir
+        })
+          .setProtectedHeader({ alg: 'HS256' }) // Algoritmo HMAC-SHA256
+          .setIssuedAt()
+          .setExpirationTime(expirationTime) // 24 horas
+          .sign(secret);
+
+        // Salvar no localStorage
+        const tokenData = {
+          token: jwt,
+          expiry: expirationTime * 1000, // Convertendo para milissegundos
+        };
+        localStorage.setItem('authToken', JSON.stringify(tokenData));
+
+        // Redirecionar para a página /chess
+        router.push('/chess');
+      } catch (err) {
+        console.error('Erro ao gerar token:', err);
+        setError('Erro durante a autenticação');
+      }
+    } else {
+      setError('Senha incorreta. Tente novamente.');
     }
-  }, [data]);
+  };
 
   return (
-    <div className="min-h-screen bg-[#242321] text-white">
+    <div className="min-h-screen bg-[#242321] text-white flex items-center justify-center">
       <main className="container mx-auto px-4 py-8 flex flex-col items-center">
-        <CountdownTimer />
-
-        {/* Área da logo */}
-        <Box
+        {/* Título do xadrez */}
+        <Typography
+          variant="h3"
+          component="h1"
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            my: 4,
+            fontFamily: '"Times New Roman", serif',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            mb: 4,
+            color: '#f0d9b5',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+            position: 'relative',
+            '&::before, &::after': {
+              content: '"♔"',
+              color: '#b58863',
+              fontSize: '1.5rem',
+              position: 'absolute',
+              top: '50%',
+              transform: 'translateY(-50%)',
+            },
+            '&::before': {
+              left: '-40px',
+            },
+            '&::after': {
+              right: '-40px',
+            },
           }}
         >
-          <Image
-            src="/logo.png"
-            alt="Chess Status Logo"
-            width={200}
-            height={200}
+          Xadrez - <span style={{ color: '#b58863' }}>1500 Rápidas</span> até
+          Novembro/25
+        </Typography>
+
+        {/* Caixa de login */}
+        <Box
+          sx={{
+            backgroundColor: '#1a1a1a',
+            padding: '2rem',
+            borderRadius: '8px',
+            width: '100%',
+            maxWidth: '400px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          }}
+        >
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{ mb: 2, textAlign: 'center', color: '#f0d9b5' }}
+          >
+            Acesso Restrito
+          </Typography>
+
+          <TextField
+            fullWidth
+            label="Senha"
+            type="password"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            sx={{
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: '#b58863',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#f0d9b5',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: '#b58863',
+              },
+              '& .MuiInputBase-input': {
+                color: 'white',
+              },
+            }}
           />
 
-          <Typography
-            variant="h3"
-            component="h1"
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={handleLogin}
             sx={{
-              fontFamily: '"Times New Roman", serif',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              mb: 1,
-              color: '#f0d9b5', // Cor de peça clara de xadrez
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
-              position: 'relative',
-              '&::before, &::after': {
-                content: '"♔"',
-                color: '#b58863', // Cor de peça escura de xadrez
-                fontSize: '1.5rem',
-                position: 'absolute',
-                top: '50%',
-                transform: 'translateY(-50%)',
-              },
-              '&::before': {
-                left: '-40px',
-              },
-              '&::after': {
-                right: '-40px',
+              backgroundColor: '#b58863',
+              '&:hover': {
+                backgroundColor: '#f0d9b5',
+                color: '#1a1a1a',
               },
             }}
           >
-            Xadrez - <span style={{ color: '#b58863' }}>1500 Rápidas</span> até
-            Novembro/25
-          </Typography>
+            Entrar
+          </Button>
         </Box>
-
-        <InfoSpeedDial refetch={refetch}/>
-
-        {/* Container dos cards dos jogadores */}
-        {Array.isArray(data) && data.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-            {data.map((data, index) => (
-              <Cards player={data} index={index} key={index} />
-            ))}
-          </div>
-        )}
-
-        {/* Loading state */}
-        {isLoading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress color="success" />
-          </Box>
-        )}
-
-        {/* Error state */}
-        {error && (
-          <Typography color="error" className="my-4">
-            Erro ao carregar dados
-          </Typography>
-        )}
       </main>
     </div>
   );

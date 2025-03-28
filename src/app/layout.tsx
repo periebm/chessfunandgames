@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ZantAI Chat',
-  description: 'Development Enviroment for ZantAI Chat',
+  title: 'ChessChallenger',
+  description: 'Desafio de Xadrez',
 };
 
 export default function RootLayout({
