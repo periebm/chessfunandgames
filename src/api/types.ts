@@ -49,7 +49,7 @@ export type ChessProfile = {
 export type ChessPlayer = {
   avatar: string;
   player_id: number;
-  "@id": string;
+  '@id': string;
   url: string;
   name: string;
   username: string;
@@ -74,9 +74,14 @@ type ChessRating = {
     date: number;
     game: string;
   };
+  fixed_mar_26?: {
+    // Adicionando o novo campo opcional
+    rating: number;
+    best?: number; // Para indicar se é o maior rating do jogador
+  };
 };
 
-type PlayerRatings = {
+export type PlayerRatings = {
   chess_rapid: ChessRating | null;
   chess_bullet: ChessRating | null;
   chess_blitz: ChessRating | null;
@@ -91,4 +96,3 @@ export type PlayerStatus = {
   status: string;
   ratings: PlayerRatings;
 };
-

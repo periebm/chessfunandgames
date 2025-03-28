@@ -1,10 +1,40 @@
 import axios from 'axios';
-import { ChessPlayer, ChessProfile } from './types';
+import { ChessPlayer, ChessProfile, PlayerStatus } from './types';
 
 export async function getPlayerStatus() {
   const playersArray = ['periebm', 'tarcnux', 'rafael_azambuja'];
+  const fixedRatings = {
+    periebm: {
+      chess_rapid: 1191,
+      chess_blitz: 1040,
+      chess_bullet: 1002,
 
-  const playerStats = [];
+    },
+    rafael_azambuja: {
+      chess_rapid: 1292,
+      chess_blitz: 1239,
+      chess_bullet: 720,
+    },
+    tarcnux: {
+      chess_rapid: 1354,
+      chess_blitz: 1104,
+      chess_bullet: 914,
+    },
+  };
+
+  // Melhores ratings por jogador
+  const bestRatingsMar = {
+    periebm: {
+      chess_rapid: 1191,
+    },
+    rafael_azambuja: {
+      chess_rapid: 1319,
+    },
+    tarcnux: {
+      chess_rapid: 1484,
+    },
+  };
+  const playerStats: PlayerStatus[] = [];
 
   for (const player of playersArray) {
     try {
@@ -20,7 +50,7 @@ export async function getPlayerStatus() {
       const playerInfo: ChessPlayer = informationResponse.data;
       const playerData: ChessProfile = statsResponse.data;
 
-      const playerObject = {
+      const playerObject: PlayerStatus = {
         avatar: playerInfo.avatar,
         url: playerInfo.url,
         name: playerInfo.name,
@@ -39,6 +69,10 @@ export async function getPlayerStatus() {
                   date: playerData.chess_rapid.best.date,
                   game: playerData.chess_rapid.best.game,
                 },
+                fixed_mar_26: {
+                  rating: fixedRatings[player].chess_rapid,
+                  best: bestRatingsMar[player].chess_rapid,
+                },
               }
             : null,
           chess_bullet: playerData.chess_bullet
@@ -48,9 +82,12 @@ export async function getPlayerStatus() {
                   date: playerData.chess_bullet.last.date,
                 },
                 best: {
-                  rating: playerData.chess_bullet.best.rating,
-                  date: playerData.chess_bullet.best.date,
-                  game: playerData.chess_bullet.best.game,
+                  rating: playerData.chess_bullet.best?.rating || 0,
+                  date: playerData.chess_bullet.best?.date || 0,
+                  game: playerData.chess_bullet.best?.game || '',
+                },
+                fixed_mar_26: {
+                  rating: fixedRatings[player].chess_bullet,
                 },
               }
             : null,
@@ -65,6 +102,9 @@ export async function getPlayerStatus() {
                   date: playerData.chess_blitz.best.date,
                   game: playerData.chess_blitz.best.game,
                 },
+                fixed_mar_26: {
+                  rating: fixedRatings[player].chess_blitz,
+                },
               }
             : null,
         },
@@ -77,53 +117,6 @@ export async function getPlayerStatus() {
     }
   }
 
+  console.log(`Dados`, playerStats);
   return playerStats;
 }
-
-/*
-/
-{
-    "avatar": "https://images.chesscomfiles.com/uploads/v1/user/326053435.6c90b93d.200x200o.7575f5f8e190.jpg",
-    "url": "https://www.chess.com/member/periebm",
-    "name": "Péricles Elias Barros Mendes",
-    "username": "periebm",
-    "last_online": 1743197847,
-    "status": "premium",
-    "ratings": {
-    "chess_rapid": {
-        "last": {
-            "rating": 1200,
-            "date": 1743039425,
-        },
-        "best": {
-            "rating": 1161,
-            "date": 1738716773,
-            "game": "https://www.chess.com/game/live/132453642951"
-        },
-    },
-    "chess_bullet": {
-        "last": {
-            "rating": 1002,
-            "date": 1736179249,
-        },
-        "best": {
-            "rating": 1002,
-            "date": 1736178715,
-            "game": "https://www.chess.com/game/live/99417191911"
-        },
-    },
-    "chess_blitz": {
-        "last": {
-            "rating": 1040,
-            "date": 1742514822,
-        },
-        "best": {
-            "rating": 1111,
-            "date": 1738362342,
-            "game": "https://www.chess.com/game/live/132100824181"
-        },
-    },
-}
-
-
-*/

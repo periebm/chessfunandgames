@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Avatar,
   Card,
@@ -10,41 +12,42 @@ import {
 } from '@mui/material';
 import InfoIcon from '@mui/icons-material/InfoOutlined';
 import Link from '@mui/material/Link';
+import { PlayerStatus } from '../../api/types';
 
 export default function Cards({
   player,
   index,
 }: {
-  player: any;
+  player: PlayerStatus;
   index: number;
 }) {
   // Dados de exemplo - substitua pelos seus dados reais
   const ratingData = [
     {
       type: 'Rápidas',
-      initial: player.rapidRating,
-      current: player.rapidRating + 25, // Exemplo de variação
+      initial: player.ratings.chess_rapid.fixed_mar_26.rating,
+      current: player.ratings.chess_rapid.last, // Exemplo de variação
       color: 'rgb(74, 222, 128)',
-      tooltip: 'Maior rating no início do desafio (26/03/25)',
+      tooltip: `Maior rating no início do desafio (26/03/25): ${player.ratings.chess_rapid.fixed_mar_26.best}`,
     },
     {
       type: 'Blitz',
-      initial: player.blitzRating,
-      current: player.blitzRating - 10,
+      initial: player.ratings.chess_blitz.fixed_mar_26.rating,
+      current: player.ratings.chess_blitz.last,
       color: '#FAD541',
     },
     {
       type: 'Bullet',
-      initial: player.bulletRating,
-      current: player.bulletRating + 15,
+      initial: player.ratings.chess_bullet.fixed_mar_26.rating,
+      current: player.ratings.chess_bullet.last,
       color: '#E3AA24',
     },
-    {
+    /*     {
       type: 'Táticas',
       initial: player.tacticsRating,
       current: player.tacticsRating + 30,
       color: '#FA742C',
-    },
+    }, */
   ];
 
   return (
@@ -72,7 +75,7 @@ export default function Cards({
           }}
         >
           <Avatar
-            src={player.image}
+            src={player.avatar}
             alt={player.username}
             sx={{
               width: 70,
@@ -190,7 +193,7 @@ export default function Cards({
                       color: rating.color,
                     }}
                   >
-                    {rating.current}
+                    {rating.current.rating}
                   </Typography>
                 </Grid>
               </Grid>

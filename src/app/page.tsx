@@ -5,59 +5,30 @@ import Image from 'next/image';
 import { CircularProgress, Box, Typography } from '@mui/material';
 import Cards from './components/Cards';
 import InfoSpeedDial from './components/InfoSpeedDial';
+import { useQuery } from '@tanstack/react-query';
+import { getPlayerStatus } from '../api/chess';
+import { useEffect } from 'react';
+import CountdownTimer from './components/CountdownTimer';
 
 const HomePage: NextPage = () => {
   // Dados estáticos dos jogadores (substitua pelos dados reais)
-  const players = [
-    {
-      username: 'chessmaster123',
-      image: '/player1.jpg', // Substitua pelas imagens reais
-      rapidRating: 1850,
-      blitzRating: 1720,
-      bulletRating: 1680,
-      tacticsRating: 2100,
-    },
-    {
-      username: 'grandmasterX',
-      image: '/player2.jpg',
-      rapidRating: 2450,
-      blitzRating: 2380,
-      bulletRating: 2320,
-      tacticsRating: 2650,
-    },
-    {
-      username: 'openingexpert',
-      image: '/player3.jpg',
-      rapidRating: 2200,
-      blitzRating: 2150,
-      bulletRating: 2080,
-      tacticsRating: 2500,
-    },
-  ];
-  /*
-  peri: rapidas: 1191
-           maior: 1191
-        blitz: 1040
-        bullet: 1002
 
-  rafa: rapidas: 1292
-            maior: 1319
-        blitz: 1239
-        bullet: 1002
-        problemas: 2128
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['chessData'], // Chave da query como array
+    queryFn: getPlayerStatus, // Função que busca os dados
+  });
 
-  tata: rapidas: 1354
-            maior: 1484 
-        blitz: 1104
-        bullet: 914
-        problemas: 2348
-  */
-  const isLoading = true;
-  const error = false;
+  useEffect(() => {
+    if (data) {
+      console.log('Dados recebidos:', data);
+    }
+  }, [data]);
 
   return (
     <div className="min-h-screen bg-[#242321] text-white">
       <main className="container mx-auto px-4 py-8 flex flex-col items-center">
+        <CountdownTimer />
+
         {/* Área da logo */}
         <Box
           sx={{
@@ -78,25 +49,50 @@ const HomePage: NextPage = () => {
           <Typography
             variant="h3"
             component="h1"
-            className="text-center font-bold mb-1"
+            sx={{
+              fontFamily: '"Times New Roman", serif',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              mb: 1,
+              color: '#f0d9b5', // Cor de peça clara de xadrez
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+              position: 'relative',
+              '&::before, &::after': {
+                content: '"♔"',
+                color: '#b58863', // Cor de peça escura de xadrez
+                fontSize: '1.5rem',
+                position: 'absolute',
+                top: '50%',
+                transform: 'translateY(-50%)',
+              },
+              '&::before': {
+                left: '-40px',
+              },
+              '&::after': {
+                right: '-40px',
+              },
+            }}
           >
-            Chess Status
+            Xadrez - <span style={{ color: '#b58863' }}>1500 Rápidas</span> até
+            Novembro/25
           </Typography>
         </Box>
 
-        <InfoSpeedDial />
+        <InfoSpeedDial refetch={refetch}/>
 
         {/* Container dos cards dos jogadores */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-          {players.map((player, index) => (
-            <Cards player={player} index={index} key={index} />
-          ))}
-        </div>
+        {Array.isArray(data) && data.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+            {data.map((data, index) => (
+              <Cards player={data} index={index} key={index} />
+            ))}
+          </div>
+        )}
 
         {/* Loading state */}
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-            <CircularProgress color="success"/>
+            <CircularProgress color="success" />
           </Box>
         )}
 
