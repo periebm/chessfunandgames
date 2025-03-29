@@ -1,14 +1,15 @@
 {
   "name": "zantai-front",
   "version": "0.1.0",
+  "homepage": "https://periebm.github.io/chessfunandgames",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 3004",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build && next export",
-    "deploy": "gh-pages -d out"
+    "predeploy": "npm run build",
+    "deploy": "touch ./out/.nojekyll && gh-pages -d out -t true"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -23,7 +24,8 @@
     "react-dom": "^19.0.0",
     "react-draggable": "^4.4.6",
     "react-icons": "^5.5.0",
-    "socket.io-client": "^4.8.1"
+    "socket.io-client": "^4.8.1",
+    "touch-cli": "^0.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -33,6 +35,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

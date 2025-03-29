@@ -1,9 +1,12 @@
-/** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV !== 'development';
 const nextConfig = {
-  output: 'export', // Isso gera arquivos estáticos
-  images: { unoptimized: true }, // Desativa otimização de imagens (necessário para deploy estático)
-  // Se seu repositório NÃO for "<usuário>.github.io", adicione:
-  basePath: process.env.NODE_ENV === 'production' ? '/chessfunandgames' : '', // Substitua pelo nome do seu repositório
+  reactStrictMode: true,
+  images: {
+    unoptimized: true, // Disable default image optimization
+  },
+  assetPrefix: isProd ? '/chessfunandgames' : '',
+  basePath: isProd ? '/chessfunandgames' : '',
+  output: 'export',
 };
 
-module.exports = nextConfig;
+export default nextConfig;
