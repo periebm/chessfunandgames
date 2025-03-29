@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install
-      - run: npm run build && npm run export
+      - run: npm run build
         env:
           # Injeta secrets como variáveis de ambiente
           NEXT_PUBLIC_SENHA: ${{ secrets.NEXT_PUBLIC_SENHA }}
