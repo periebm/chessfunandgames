@@ -97,6 +97,7 @@ const HomePage: NextPage = () => {
             alt="Chess Status Logo"
             width={200}
             height={200}
+            unoptimized
           />
 
           <Typography
