@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: 20
       - run: npm install
-      - run: npm run build
+      - run: npm run build && npm run export
         env:
           # Injeta secrets como variáveis de ambiente
           NEXT_PUBLIC_SENHA: ${{ secrets.NEXT_PUBLIC_SENHA }}
@@ -19,4 +19,4 @@ jobs:
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out  # Pasta gerada pelo Next.js
+          publish_dir: ./out # Pasta gerada pelo Next.js
