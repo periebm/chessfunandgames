@@ -93,7 +93,7 @@ const HomePage: NextPage = () => {
           }}
         >
           <Image
-            src="chessfunandgames/logo.png"
+            src="/logo.png"
             alt="Chess Status Logo"
             width={200}
             height={200}
